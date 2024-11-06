@@ -1,0 +1,34 @@
+<!-- 
+このテンプレートに秘匿情報を追加して ExportOptions.plist を作成します
+  * TEAMID: Apple Developer の Team ID
+  * APP_BUNDLE_ID: バンドルID
+  * PROVISIONING_PROFILE_NAME: プロビジョニングプロファイル名
+  @see ../dev_tool/create_export_options.sh
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>manageAppVersionAndBuildNumber</key>
+	<true/>
+	<key>method</key>
+	<string>app-store</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>__APP_BUNDLE_ID__</key>
+		<string>__PROVISIONING_PROFILE_NAME__</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>__TEAMID__</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>
