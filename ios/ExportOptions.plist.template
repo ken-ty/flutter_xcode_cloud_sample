@@ -28,6 +28,8 @@
 	<true/>
 	<key>teamID</key>
 	<string>__TEAMID__</string>
+	<key>uploadBitcode</key>
+	<false/>
 	<key>uploadSymbols</key>
 	<true/>
 </dict>
