@@ -27,4 +27,9 @@ brew install cocoapods
 # Install CocoaPods dependencies.
 cd ios && pod install # run `pod install` in the `ios` directory.
 
+# Set the build number to the number of commits on the current branch.
+# 一旦 pubspec でバージョンを管理するため、このスクリプトは不要
+# BUILD_NUMBER=$(git rev-list --count HEAD)
+# /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "ios/Runner/Info.plist"
+
 exit 0
