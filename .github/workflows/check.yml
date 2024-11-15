@@ -4,35 +4,34 @@ on:
 
 jobs:
   check:
-    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/testflight')
+    if: contains(github.event.comment.body, '/check') && github.event.issue.pull_request != null
     runs-on: ubuntu-latest
+
     steps:
       # PR情報を取得
       - name: Get pull request details
         id: pr_details
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}} #自動で設定されるトークン
+          github-token: ${{ secrets.GITHUB_TOKEN }}  #自動で設定されるトークン
           script: |
             const prNumber = context.payload.issue.number;
-            const pr = await github.pulls.get({
+            const pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
             });
             return pr.data;
 
-  
-
       # アクション開始を通知
       - name: Notify action start
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const workflow_url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
             const prNumber = context.payload.issue.number;
-            await github.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
@@ -52,10 +51,10 @@ jobs:
         if: success()
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const prNumber = context.payload.issue.number;
-            await github.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
@@ -67,11 +66,11 @@ jobs:
         if: failure()
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const prNumber = context.payload.issue.number;
             const workflow_url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-            await github.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
