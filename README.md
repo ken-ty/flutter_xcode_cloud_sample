@@ -4,4 +4,10 @@ Example Xcode Cloud in Flutter project
 
 ## Getting Started
 
-main に push すると xcode cloud で アーカイブ作成 → TestFlight に自動でアップロードされる
+
+![スクリーンショット 2024-11-15 14 33 04](https://github.com/user-attachments/assets/0123c3ac-3044-4aa6-b39b-e78149055a75)
+
+- Archive&TestFlight Workflow
+  - main が変更されると、 アーカイブ → TestFlight が実行されます。
+- Build Workflow
+  - feature/* が変更されると、 build できるかチェックが実行されます。
