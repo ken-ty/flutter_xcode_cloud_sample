@@ -1,87 +1,25 @@
+name: test command on issue
+
 on:
   issue_comment:
-    types: [created, edited]
+    types: [created]
 
 jobs:
-  check:
-    if: contains(github.event.comment.body, '/check') && github.event.issue.pull_request != null
+  issue-commented:
+    name: Issue comment
+    if: ${{ !github.event.issue.pull_request }}
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/github-script@v7
+      - name: Check publish command
+        uses: xt0rted/slash-command-action@v1
         with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 Thanks for reporting!'
-            })
-      # PR情報を取得
-      - name: Get pull request details
-        id: pr_details
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}  #自動で設定されるトークン
-          script: |
-            const prNumber = context.payload.issue.number;
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
-            return pr.data;
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          command: test
+          reaction: "true"
+          reaction-type: "eyes"
 
-      # アクション開始を通知
-      - name: Notify action start
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const workflow_url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-            const prNumber = context.payload.issue.number;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: `🚀 Action started! You can check the status here: [View Action Progress](${workflow_url}).`
-            });
-
-      # 必要なビルド・チェック処理
-      - name: Run checks
+      - name: Do something
         run: |
-          echo "Running checks on branch ${{ steps.pr_details.outputs.result.head.ref }}..."
-          echo "result is → ${{ steps.pr_details.outputs.result }}..."
-          # 実際のチェック処理やビルドを記述
-          echo "Checks completed successfully."
-
-      # 成功時の通知
-      - name: Notify success
-        if: success()
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const prNumber = context.payload.issue.number;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: `✅ Action completed successfully!`
-            });
-
-      # 失敗時の通知
-      - name: Notify failure
-        if: failure()
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const prNumber = context.payload.issue.number;
-            const workflow_url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body: `❌ Action failed. Please check the logs for details: [View Logs](${workflow_url}).`
-            });
+          echo $ISSUE_JSON
+        env:
+          ISSUE_JSON: ${{ toJson(github.event.issue) }}
