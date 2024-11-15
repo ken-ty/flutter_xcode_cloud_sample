@@ -1,7 +1,35 @@
+name: Comment-triggered Check
+
 on:
   issue_comment:
-    types: [created]
+    types: [created] # コメント作成時のみトリガー
 
 jobs:
   distribute:
+    # "/check" でトリガー
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/check')
+    runs-on: ubuntu-latest
+
+    steps:
+      # PR情報を取得するステップ
+      - name: Get pull request details
+        id: pull_request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prNumber = context.payload.issue.number;
+            const pr = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            return pr.data;
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # デバッグ情報を出力
+      - name: Check branch
+        id: check
+        run: |
+          echo "Branch: ${{ fromJSON(steps.pull_request.outputs.result).head.ref }}"
+          echo "PR Details: ${{ steps.pull_request.outputs.result }}"
