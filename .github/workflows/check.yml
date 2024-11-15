@@ -1,0 +1,7 @@
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  distribute:
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/check')
