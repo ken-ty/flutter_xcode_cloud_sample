@@ -6,8 +6,8 @@ on:
 
 jobs:
   issue-commented:
-    name: Issue comment
-    if: ${{ !github.event.issue.pull_request }}
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
       - name: Check publish command
