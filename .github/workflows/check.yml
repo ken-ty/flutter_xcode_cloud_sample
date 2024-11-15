@@ -1,15 +1,11 @@
-name: Comment-triggered Check
-
 on:
   issue_comment:
-    types: [created] # コメント作成時に発火
+    types: [created, edited]
 
 jobs:
   check:
-    # 条件: コメントが特定のコマンドで、かつPRに関連する場合
-    if: startsWith(github.event.comment.body, '/check') && github.event.issue.pull_request != null
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/testflight')
     runs-on: ubuntu-latest
-
     steps:
       # PR情報を取得
       - name: Get pull request details
